@@ -1,0 +1,3 @@
+import site from '../content/site.json';
+export const dynamic='force-static';
+export default function sitemap(){const base=process.env.SITE_URL||'https://moxfur.com';const paths=['','collections','collections/all','blogs/news',...site.products.filter(p=>p.status==='ACTIVE'&&p.publishedAt).map(p=>'products/'+p.handle),...site.collections.map(p=>'collections/'+p.handle),...site.pages.filter(p=>p.isPublished).map(p=>'pages/'+p.handle),...site.articles.filter(p=>p.isPublished).map(p=>'blogs/'+p.blog.handle+'/'+p.handle),...site.settings.shop.shopPolicies.map(p=>'policies/'+p.type.toLowerCase().replaceAll('_','-'))];return paths.map(p=>({url:base+'/'+p+(p?'/':'' )}))}
