@@ -2,11 +2,12 @@
 import {useEffect,useState} from 'react';
 import {createPortal} from 'react-dom';
 import Search from './Search';
+import {installCatalog} from '../lib/catalog-runtime';
 export default function ThemeRuntime({scripts,inline,products}){
  const [target,setTarget]=useState(null);
  useEffect(()=>{let stopped=false;
   const url=new URL(window.location.href),page=Number(url.searchParams.get('page'));
-  if(Number.isInteger(page)&&page>1&&/^\/(collections|blogs)\//.test(url.pathname)&&!url.pathname.includes('/page/')){window.location.replace(url.pathname.replace(/\/$/,'')+'/page/'+page+'/');return;}
+  if(Number.isInteger(page)&&page>1&&/^\/(collections|blogs)\//.test(url.pathname)&&!url.pathname.includes('/page/')){url.pathname=url.pathname.replace(/\/$/,'')+'/page/'+page+'/';url.searchParams.delete('page');window.location.replace(url.href);return;}
   window.Shopify={designMode:false,routes:{root:'/'},locale:'en'};
   window.routes={root:'/',search_url:'/search/',predictive_search_url:'/search/'};
   window.accessibilityStrings={imageAvailable:'Image [index] is now available in gallery view',shareSuccess:'Link copied',pauseSlideshow:'Pause slideshow',playSlideshow:'Play slideshow'};
@@ -15,9 +16,10 @@ export default function ThemeRuntime({scripts,inline,products}){
    if(stopped)return;for(const code of inline){const tag=document.createElement('script');tag.textContent=code;document.body.append(tag);}
    document.dispatchEvent(new Event('DOMContentLoaded'));document.documentElement.classList.add('mox-theme-ready');
   };run();
-  const submit=e=>{const form=e.target;if(form.matches('[data-mox-inquiry]')){e.preventDefault();if(!form.reportValidity())return;const text=[...new FormData(form)].map(([k,v])=>k.replace(/^contact\[|\]$/g,'')+': '+v).join('\n');window.location.href='mailto:info@moxfur.com?subject='+encodeURIComponent('Moxfur project inquiry')+'&body='+encodeURIComponent(text);}};
+  const submit=e=>{const form=e.target;if(form.matches('[data-mox-inquiry]')){e.preventDefault();if(!form.reportValidity())return;const text=[...new FormData(form)].map(([k,v])=>k.replace(/^(contact|comment)\[|\]$/g,'')+': '+v).join('\n');window.location.href='mailto:info@moxfur.com?subject='+encodeURIComponent(form.dataset.emailSubject||'Moxfur project inquiry')+'&body='+encodeURIComponent(text);}};
+  const removeCatalog=installCatalog();
   document.addEventListener('submit',submit);setTarget(document.getElementById('mox-search-root'));
-  return()=>{stopped=true;document.removeEventListener('submit',submit);};
+  return()=>{stopped=true;removeCatalog();document.removeEventListener('submit',submit);};
  },[scripts,inline]);
  return target&&products?createPortal(<Search products={products}/>,target):null;
 }

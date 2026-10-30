@@ -11,7 +11,8 @@ Use Node.js 22+. Run `npm ci`, `npm run build`, `npm start`. The local static pr
 - `content/rendered/index.json` maps original URLs to page files.
 - `content/rendered/<id>.json` contains each page's original HTML, SEO metadata, local stylesheet references and standalone interactions. Edit the `html`, `title` or `description` fields and rebuild. No Shopify account is needed.
 - `content/site.json` retains the structured product catalog, collection memberships, page and blog content, navigation, policies and theme configuration. The local search uses this catalog; changing this file alone does not rewrite the restored HTML snapshots.
-- `public/media/` and `public/theme/` contain all media, fonts, CSS and theme scripts. `app/restored.css` holds only independent-site adjustments.
+- `public/media/`, `public/theme/` and `public/imported/` contain the localized media, fonts, CSS and theme scripts. One original Google-hosted blog image returns HTTP 403 and remains unresolved; see `MIGRATION-AUDIT.md`. `app/restored.css` holds only independent-site adjustments.
+- `content/metadata.json` preserves original social sharing metadata and the favicon. `public/catalog.json` contains the original product cards and all nine original catalog sorting orders for local filtering, sorting and pagination. Update these alongside the rendered pages when changing content.
 - The migration scripts capture Shopify only during the one-time migration; they are not part of the normal build or runtime. Original raw exports remain in the ignored local `migration/` directory.
 
 ## Restored scope
@@ -22,10 +23,10 @@ The original per-page markup is rendered by Next.js instead of approximating eve
 
 ## Inquiry form
 
-The contact page keeps its original form layout. Submitting prepares an email in the visitor's email application to info@moxfur.com; it does not silently send mail or save submissions. The form explains this behavior. A mail delivery backend is needed if submissions must be sent directly from the website.
+The contact page keeps its original form layout. Submitting prepares an email in the visitor's email application to info@moxfur.com; it does not send mail or save submissions itself. Blog comment forms also prepare emails and explicitly state that they do not publish public comments. A mail delivery and storage backend is needed for direct website submissions. Required fields and email format are validated locally.
 
 ## Verification and launch
 
-`npm run check` audits exported links and assets. `scripts/verify-restoration.mjs` checks desktop/mobile rendering and interactions with Playwright; set `CHROMIUM_PATH` if using an existing browser executable. Raw comparison screenshots and reports are local under `migration/`.
+`npm run check` audits exported links and assets. `scripts/audit-browser.mjs` checks all 254 routes at desktop and mobile widths; `scripts/audit-features.mjs` checks sorting, filtering, pagination, redirects, sharing, email forms, video, search and navigation. These scripts default to the production preview at port 3001; override `AUDIT_URL` if needed, and set `CHROMIUM_PATH` if using an existing browser executable. The browser audit intentionally fails while the unresolved source image is broken. `scripts/audit-migration.mjs` compares the local Shopify export and raw HTML cache against restored content, collection membership, metadata and resources; it requires the ignored `migration/` audit inputs. Raw comparison screenshots and reports are local under `migration/`.
 
 Keep the original site active until hosting and domain cutover are complete. Policies are retained verbatim and still contain existing Shopify references/placeholders; update them to match the actual independent business operation before launch.
