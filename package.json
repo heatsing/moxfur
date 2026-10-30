@@ -5,8 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/redirects.mjs",
-    "start": "next start",
-    "migrate": "node scripts/migrate.mjs"
+    "start": "node scripts/serve.mjs",
+    "migrate": "node scripts/migrate.mjs",
+    "check": "node scripts/check.mjs"
   },
   "dependencies": {
     "cheerio": "^1.1.0",

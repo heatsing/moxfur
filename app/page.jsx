@@ -1,2 +1,3 @@
-import {Template} from '../components/Content';
-export default function Home(){return <main><Template name="index"/></main>}
+import RestoredPage,{readPage} from '../components/RestoredPage';
+export function generateMetadata(){const p=readPage('');return {title:p.title,description:p.description,alternates:{canonical:'/'}}}
+export default function Home(){return <RestoredPage record={readPage('')}/>}

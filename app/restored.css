@@ -1,0 +1,5 @@
+/* Original route-specific theme styles are bundled locally. */
+.mox-whatsapp{position:fixed;right:20px;bottom:24px;z-index:1000;display:flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;background:#25d366;color:white;box-shadow:0 3px 14px #0003}
+.mox-inquiry-note{font-size:13px;line-height:1.5}.mox-theme-ready .scroll-trigger:not(.scroll-trigger--offscreen){opacity:1}
+#mox-search-root{max-width:1200px;margin:auto;padding:40px 24px}#mox-search-root .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}#mox-search-root .card{color:inherit;text-decoration:none}#mox-search-root .card img{width:100%;aspect-ratio:1;object-fit:contain}#mox-search-root h3{font-size:18px}
+@media(max-width:749px){#mox-search-root .grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mox-whatsapp{width:60px;height:60px;right:18px;bottom:18px}}
